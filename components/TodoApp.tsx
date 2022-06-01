@@ -5,6 +5,7 @@ import { transact, useInit as useInitInstantDB, useQuery, tx, id } from "instant
 import { title } from "process";
 import Link from "next/link";
 import { useCallback } from "react";
+import { Spinner } from "./Loading";
 
 export enum Status {
   pending = "pending",
@@ -143,7 +144,14 @@ export const TodoDetailView = ({ className, todo, ...props }: ITodoDetailView) =
           name="body"
           id="body"
           className="bg-slate-200 w-full p-2 rounded min-h-[200px]"
+          onChange={(e) => {
+            updateBody(e.target.value);
+          }}
+          value={todo.body || ""}
           placeholder="Details..."></textarea>
+        <small className="block italic">
+          Note: This <code>textarea</code> will not work very well.
+        </small>
       </form>
     </div>
   );
@@ -188,7 +196,7 @@ const TodoApp = ({ className, ...props }: ITodoApp) => {
   const isLoading = useInit();
   return (
     <div {...props} data-test-id="TodoApp" className={classNames("", className)}>
-      {isLoading ? <div>Loading ...</div> : <Main />}
+      {isLoading ? <Spinner /> : <Main />}
     </div>
   );
 };
