@@ -1,17 +1,18 @@
 import classNames from "classnames";
 import { faker } from "@faker-js/faker";
 
-import { transact, useInit, useQuery, tx, id } from "instant-local-throwaway";
+import { transact, useInit as useInitInstantDB, useQuery, tx, id } from "instant-local-throwaway";
 import { title } from "process";
 import Link from "next/link";
+import { useCallback } from "react";
 
-enum Status {
+export enum Status {
   pending = "pending",
   complete = "complete",
   cancelled = "cancelled",
 }
 
-interface ITodo {
+export interface ITodo {
   id: string;
   title: string;
   createdAt: Date;
@@ -111,6 +112,43 @@ export const TodoList = ({ className, ...props }: ITodoList) => {
   );
 };
 
+interface ITodoDetailView extends React.ComponentProps<"div"> {
+  todo: ITodo;
+}
+export const TodoDetailView = ({ className, todo, ...props }: ITodoDetailView) => {
+  const updateBody = useCallback(
+    (x: string) => {
+      transact([tx.posts[todo.id].update({ body: x })]);
+    },
+    [todo.id],
+  );
+  return (
+    <div
+      {...props}
+      data-test-id="TodoDetailView"
+      className={classNames("flex flex-col space-y-4", className)}>
+      <h3 className="text-3xl capitalize">{todo.title}</h3>
+      <div className="flex space-x-4">
+        <div
+          className={classNames("text-xs uppercase font-bold  px-1 py-px rounded", {
+            "bg-amber-700 text-white": todo.status === Status.pending,
+            "bg-green-300": todo.status === Status.complete,
+          })}>
+          {todo.status}
+        </div>
+        <div className="text-sm italic">Last updated {todo.updatedAt.toLocaleString()}</div>
+      </div>
+      <form>
+        <textarea
+          name="body"
+          id="body"
+          className="bg-slate-200 w-full p-2 rounded min-h-[200px]"
+          placeholder="Details..."></textarea>
+      </form>
+    </div>
+  );
+};
+
 function Main() {
   const q = useQuery({
     posts: {},
@@ -143,9 +181,11 @@ function Main() {
   );
 }
 
+export const useInit = () => useInitInstantDB({ token: "28848c49-c2c3-499d-b9af-7c1fd396613d" });
+
 type ITodoApp = React.ComponentProps<"div">;
 const TodoApp = ({ className, ...props }: ITodoApp) => {
-  const isLoading = useInit({ token: "28848c49-c2c3-499d-b9af-7c1fd396613d" });
+  const isLoading = useInit();
   return (
     <div {...props} data-test-id="TodoApp" className={classNames("", className)}>
       {isLoading ? <div>Loading ...</div> : <Main />}
