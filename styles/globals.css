@@ -6,4 +6,7 @@
   .page-container {
     @apply p-4 sm:p-12;
   }
+  .btn {
+    @apply px-4 text-sm uppercase font-bold py-2 rounded bg-blue-200 hover:bg-blue-300;
+  }
 }
