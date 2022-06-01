@@ -11,10 +11,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <main className="flex w-full flex-1 flex-col">{children}</main>
 
-      <footer className="flex p-4 w-full items-center space-x-2 justify-start border-t">
-        <span>{"🦶"}</span>
-        <span>Oh what a footer</span>
-        {/* &copy; Ian Sinnott {new Date().getFullYear()} */}
+      <footer className="flex w-full items-center justify-between border-t p-4">
+        <div className="flex space-x-2 ">
+          <span>{"🦶"}</span>
+          <span>Oh what a footer</span>
+        </div>
+        <div>
+          <a className="text-blue-600 underline" href="https://github.com/iansinnott/try-instantdb">
+            Source Code
+          </a>
+        </div>
       </footer>
     </div>
   );
